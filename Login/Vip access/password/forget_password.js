@@ -1,12 +1,8 @@
-// ====================== FORGOT PASSWORD.JS ===========================
+// ================= FORGOT PASSWORD.JS ===========================
 document.addEventListener("DOMContentLoaded", () => {
-    if (!window.profileSync) {
-        console.error("profile-sync.js not loaded!");
-        return;
-    }
-
+    if (!window.profileSync) return console.error("profile-sync.js not loaded!");
     const profileSync = window.profileSync;
-    const SERVER_URL = "http://localhost:3000"; // Server base URL
+    const SERVER_URL = "http://localhost:3000";
 
     const usernameInput = document.getElementById("fpUsername");
     const securityQInput = document.getElementById("fpSecurityQuestion");
@@ -17,76 +13,57 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let activeUser = null;
 
-    // -------------------- FETCH USER --------------------
     usernameInput?.addEventListener("blur", async () => {
         const username = usernameInput.value.trim();
         if (!username) return;
 
-        // Try offline first
-        const localUsers = profileSync.getLocalUserList();
-        activeUser = localUsers.find(u => u.username === username);
+        // Offline first
+        let users = profileSync.getLocalUserList();
+        activeUser = users.find(u => u.username === username);
 
-        // If not found locally and online, fetch from server
+        // Online fallback
         if (!activeUser && navigator.onLine) {
             try {
-                const response = await fetch(`${SERVER_URL}/users/${encodeURIComponent(username)}`);
-                if (response.ok) {
-                    const data = await response.json();
-                    if (data.user) {
-                        activeUser = data.user;
-                        // Save to local storage for offline use
-                        profileSync.setLocalUser(activeUser);
-                    }
+                const res = await fetch(`${SERVER_URL}/getUser?username=${encodeURIComponent(username)}`);
+                const data = await res.json();
+                if (data.user) {
+                    activeUser = data.user;
+                    profileSync.setLocalUser(activeUser);
                 }
             } catch (err) {
-                console.warn("Unable to fetch user from server:", err.message);
+                console.warn("Server unreachable, using offline only.");
             }
         }
 
-        // Populate security question if user exists
         securityQInput.value = activeUser?.securityQuestion || "";
     });
 
-    // -------------------- RESET PASSWORD --------------------
     resetBtn?.addEventListener("click", async () => {
-        if (!activeUser) {
-            showMessage("Username not found!", "red");
-            return;
-        }
+        if (!activeUser) return showMessage("Username not found!", "red");
 
-        const answer = securityAInput?.value.trim();
-        const newPass = newPasswordInput?.value;
+        const answer = securityAInput.value.trim();
+        const newPass = newPasswordInput.value;
+        if (!answer || !newPass) return showMessage("Please fill all fields.", "red");
+        if (answer !== activeUser.securityAnswer) return showMessage("Security answer is incorrect!", "red");
 
-        if (!answer || !newPass) {
-            showMessage("Please fill all fields.", "red");
-            return;
-        }
-
-        if (answer !== activeUser.securityAnswer) {
-            showMessage("Security answer is incorrect!", "red");
-            return;
-        }
-
-        // Update password locally
+        // Update locally
         activeUser.password = newPass;
         profileSync.setLocalUser(activeUser);
 
-        // Attempt server sync if online
+        // Attempt server sync
         if (navigator.onLine) {
             try {
-                const response = await fetch(`${SERVER_URL}/users/${encodeURIComponent(activeUser.username)}/update-password`, {
+                await fetch(`${SERVER_URL}/updateUser`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ password: newPass })
+                    body: JSON.stringify({ username: activeUser.username, data: activeUser })
                 });
-
-                if (!response.ok) throw new Error("Server update failed");
             } catch (err) {
-                console.warn("Server sync failed, password saved locally:", err.message);
+                console.warn("Server sync failed, saved locally.");
             }
         }
 
-        showMessage("Password reset successful! Redirecting to login...", "lime");
+        showMessage("Password reset successful! Redirecting...", "lime");
         setTimeout(() => window.location.href = "login.html", 1000);
     });
 
