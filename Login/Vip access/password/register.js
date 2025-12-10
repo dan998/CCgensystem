@@ -1,3 +1,4 @@
+// ====================== REGISTER.JS ===========================
 document.addEventListener("DOMContentLoaded", () => {
     if (!window.profileSync) {
         console.error("profile-sync.js not loaded!");
@@ -15,6 +16,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const registerBtn   = document.getElementById("registerBtn");
     const registerMsg   = document.getElementById("registerMsg");
 
+    const SERVER_URL = "http://localhost:3000"; // server base URL
+
     // -------------------- REGISTER --------------------
     registerBtn?.addEventListener("click", async () => {
         const username = usernameInput?.value.trim();
@@ -29,7 +32,8 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        let users = JSON.parse(localStorage.getItem("users")) || [];
+        // Load existing users locally
+        let users = profileSync.getLocalUserList();
         if (users.find(u => u.username === username)) {
             showMessage("Username already exists!", "red");
             return;
@@ -50,14 +54,30 @@ document.addEventListener("DOMContentLoaded", () => {
             loginHistory: []
         };
 
-        // Save locally
+        // ---------------- SAVE LOCALLY ----------------
         profileSync.setLocalUser(newUser);
 
-        // Try to sync to server
-        await profileSync.syncToServer();
+        // ---------------- TRY SERVER SYNC ----------------
+        try {
+            const response = await fetch(`${SERVER_URL}/register`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(newUser)
+            });
 
-        showMessage("Registration successful! Redirecting to login...", "lime");
-        setTimeout(() => window.location.href = "login.html", 1000);
+            if (!response.ok) throw new Error("Server unreachable");
+
+            const data = await response.json();
+            if (data.error) throw new Error(data.error);
+
+            showMessage("Registration successful! Redirecting to login...", "lime");
+            setTimeout(() => window.location.href = "login.html", 1000);
+
+        } catch (err) {
+            console.warn("Server registration failed, offline mode enabled:", err.message);
+            showMessage("Registration saved locally. Connect to server later to sync.", "orange");
+            setTimeout(() => window.location.href = "login.html", 1500);
+        }
     });
 
     function showMessage(msg, color) {
