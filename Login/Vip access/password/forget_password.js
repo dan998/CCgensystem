@@ -1,3 +1,4 @@
+// ====================== FORGOT PASSWORD.JS ===========================
 document.addEventListener("DOMContentLoaded", () => {
     if (!window.profileSync) {
         console.error("profile-sync.js not loaded!");
@@ -5,6 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     const profileSync = window.profileSync;
+    const SERVER_URL = "http://localhost:3000"; // Server base URL
 
     const usernameInput = document.getElementById("fpUsername");
     const securityQInput = document.getElementById("fpSecurityQuestion");
@@ -20,18 +22,29 @@ document.addEventListener("DOMContentLoaded", () => {
         const username = usernameInput.value.trim();
         if (!username) return;
 
-        let users = JSON.parse(localStorage.getItem("users")) || [];
-        activeUser = users.find(u => u.username === username);
+        // Try offline first
+        const localUsers = profileSync.getLocalUserList();
+        activeUser = localUsers.find(u => u.username === username);
 
+        // If not found locally and online, fetch from server
         if (!activeUser && navigator.onLine) {
-            activeUser = await profileSync.fetchUserFromServer(username);
+            try {
+                const response = await fetch(`${SERVER_URL}/users/${encodeURIComponent(username)}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.user) {
+                        activeUser = data.user;
+                        // Save to local storage for offline use
+                        profileSync.setLocalUser(activeUser);
+                    }
+                }
+            } catch (err) {
+                console.warn("Unable to fetch user from server:", err.message);
+            }
         }
 
-        if (activeUser) {
-            securityQInput.value = activeUser.securityQuestion || "";
-        } else {
-            securityQInput.value = "";
-        }
+        // Populate security question if user exists
+        securityQInput.value = activeUser?.securityQuestion || "";
     });
 
     // -------------------- RESET PASSWORD --------------------
@@ -54,9 +67,24 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
+        // Update password locally
         activeUser.password = newPass;
         profileSync.setLocalUser(activeUser);
-        await profileSync.syncToServer();
+
+        // Attempt server sync if online
+        if (navigator.onLine) {
+            try {
+                const response = await fetch(`${SERVER_URL}/users/${encodeURIComponent(activeUser.username)}/update-password`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ password: newPass })
+                });
+
+                if (!response.ok) throw new Error("Server update failed");
+            } catch (err) {
+                console.warn("Server sync failed, password saved locally:", err.message);
+            }
+        }
 
         showMessage("Password reset successful! Redirecting to login...", "lime");
         setTimeout(() => window.location.href = "login.html", 1000);
