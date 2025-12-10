@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>IP Finder</title>
+    <link href='https://fonts.googleapis.com/css?family=Blackletter' rel='stylesheet'>
+    <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css"
+        integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+    <style type="text/css">
+      body {
+        background-color: black;
+        font-size: 16px; /* Update font size for the entire page */
+      }
+
+      .hd {
+        font-family: 'Blackletter', sans-serif;
+        color: #05bdfa;
+        font-size: 40px;
+      }
+
+      .tbl {
+        display: none; /* Initially hide the table */
+        border-collapse: collapse;
+        font-weight: bold;
+      }
+
+      .a {
+        text-align: right;
+        border: 2px solid #fa071c;
+        border-right: 2px solid black;
+        padding: 10px;
+        background-color: #0e29f0;
+        color: #f2fa07;
+        font-family: Bungee;
+        font-size: 10px;
+      }
+
+      .b {
+        border: 2px solid #0e29f0;
+        border-left: 2px solid black;
+        padding: 10px;
+        background-color: #fa071c;
+        color: #1dfa05;
+        font-family: Grenze;
+        font-size: 20px;
+      }
+
+      .back-button {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        background-color: #fa071c;
+        color: #1dfa05;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        text-decoration: none;
+        font-family: 'Blackletter', sans-serif;
+        font-size: 16px;
+      }
+
+      .input-section {
+        margin-top: 20px;
+        padding: 10px;
+      }
+
+      .input-section input {
+        width: 60%;
+        padding: 5px;
+      }
+      
+      .button-container {
+        text-align: center; /* Center align the buttons */
+        margin-top: 10px; /* Add some top margin for spacing */
+    }
+
+    .btn {
+        padding: 5px 10px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 14px; /* Adjust the font size as needed */
+        color: white; /* Text color for all buttons */
+        margin-right: 10px; /* Add spacing between buttons */
+    }
+
+    .btn-csv {
+        background-color: #05bdfa; /* CSV button color */
+    }
+
+    .btn-json {
+        background-color: #ff5733; /* JSON button color */
+    }
+
+    </style>
+</head>
+
+<body>
+    <a href="#" class="back-button" onclick="goBack()">Back</a> <center>
+        <br>
+        <br><h1 class="hd"><br>INFORMATION GRABBER</h1>
+
+        <div class="input-section">
+            <p style="color: red">Enter your IP Address or Press "Get MyIP Info" to get your own IP info</p>
+            <label for="ipAddress" style="color: red">Enter IP Address:</label><br>
+            <input type="text" id="ipAddress" placeholder="Enter an IP address"><br><br>
+            <label for="binNumber" style="color: red">Enter BIN (Bank Identification Number)</label>
+            <input type="text" id="binNumber" placeholder="Enter a BIN"><br>
+            <button onclick="getCustomIpInfo()">Get MyIP Info</button>
+            <br>
+            <button onclick="hideTable()">Hide Table</button> <!-- Added Hide Table button -->
+        </div>
+
+        <table class="tbl">
+            <tr>
+                <td class="a">IP Address</td>
+                <td class="b" id="ip"></td>
+            </tr>
+            <tr>
+                <td class="a">Country</td>
+                <td class="b" id="coun"></td>
+            </tr>
+            <tr>
+                <td class="a">State</td>
+                <td class="b" id="stat"></td>
+            </tr>
+            <tr>
+                <td class="a">City</td>
+                <td class="b" id="city"></td>
+            </tr>
+            <tr>
+                <td class="a">SIM Service (ISP)</td>
+                <td class="b" id="sim"></td>
+            </tr>
+            <tr>
+                <td class="a">Time Zone</td>
+                <td class="b" id="timezone"></td>
+            </tr>
+            <tr>
+                <td class="a">Postal Code</td>
+                <td class="b" id="postal"></td>
+            </tr>
+            <tr>
+                <td class="a">Type of Currency</td>
+                <td class="b" id="currency_name"></td>
+            </tr>
+            <tr>
+                <td class="a">ZIP Code</td>
+                <td class="b" id="zip_code"></td>
+            </tr>
+            <tr>
+                <td class="a">Address</td>
+                <td class="b" id="address"></td>
+            </tr>
+            <tr>
+                <td class="a">Region</td>
+                <td class="b" id="region"></td>
+            </tr>
+            <tr>
+                <td class="a">Latitude</td>
+                <td class="b" id="latitude"></td>
+            </tr>
+            <tr>
+                <td class="a">Longitude</td>
+                <td class="b" id="longitude"></td>
+            </tr>
+            <!-- Add BIN information rows to the table -->
+            <tr>
+                <td class="a">BIN Number</td>
+                <td class="b" id="bin_number"></td>
+            </tr>
+            <tr>
+                <td class="a">BIN Scheme</td>
+                <td class="b" id="bin_scheme"></td>
+            </tr>
+            <tr>
+                <td class="a">BIN Brand</td>
+                <td class="b" id="bin_brand"></td>
+            </tr>
+            <tr>
+                <td class="a">BIN Type</td>
+                <td class="b" id="bin_type"></td>
+            </tr>
+            <tr>
+                <td class="a">BIN Level</td>
+                <td class="b" id="bin_level"></td>
+            </tr>
+            <tr>
+                <td class="a">BIN Currency</td>
+                <td class="b" id="bin_currency"></td>
+            </tr>
+            <tr>
+                <td class="a">BIN Issuer</td>
+                <td class="b" id="bin_issuer"></td>
+            </tr>
+            <tr>
+                <td class="a">BIN Country</td>
+                <td class="b" id="bin_country"></td>
+            </tr>
+        </table>
+        
+        
+        <h2 class="hd"></h2>
+        <div class="button-container">
+    <button class="btn btn-csv" onclick="exportTable('csv')">Export as CSV</button>
+    <button class="btn btn-json" onclick="exportTable('json')">Export as JSON</button>
+</div>
+
+        
+    </center>
+</body>
+<script>
+    
+    
+    const _0x3d5a23=_0x20ba;(function(_0x22a3ec,_0x2db505){const _0x50ece7=_0x20ba,_0x43f47c=_0x22a3ec();while(!![]){try{const _0x3763b5=-parseInt(_0x50ece7(0xfe))/0x1*(parseInt(_0x50ece7(0x139))/0x2)+-parseInt(_0x50ece7(0x111))/0x3+-parseInt(_0x50ece7(0x140))/0x4+parseInt(_0x50ece7(0x14e))/0x5*(-parseInt(_0x50ece7(0x121))/0x6)+parseInt(_0x50ece7(0x141))/0x7+-parseInt(_0x50ece7(0x102))/0x8*(parseInt(_0x50ece7(0x108))/0x9)+parseInt(_0x50ece7(0x11a))/0xa*(parseInt(_0x50ece7(0x136))/0xb);if(_0x3763b5===_0x2db505)break;else _0x43f47c['push'](_0x43f47c['shift']());}catch(_0x5832c5){_0x43f47c['push'](_0x43f47c['shift']());}}}(_0x3fb1,0x479ba));function hi(){const _0x146674=_0x20ba;console[_0x146674(0xfb)]('Hello\x20World!');}hi(),document[_0x3d5a23(0x119)](_0x3d5a23(0x12b))['disabled']=!![],document[_0x3d5a23(0x119)]('.btn-json')[_0x3d5a23(0x11c)]=!![];function _0x3fb1(){const _0x243d0f=['1551lWASWg','display','sim','6wlwKQZ','none','region','stringify','style','File\x20\x27','POST','1907040ilJoaW','314930yxRixH','coun','timezone','textContent','download','parse','then','value','https://bin-ip-checker.p.rapidapi.com/?bin=','open','data:text/json;charset=utf-8,','error','back','639605NGrBpJ','getElementById','keys','setAttribute','log','values','&ip=','5357QZHwAi','address','href','/json/','160YdNIoA','bin-ip-checker.p.rapidapi.com','bin_type','csv','number','bin_number','11412RESIbh','level','latitude','application/json','response','\x27\x20already\x20exists.\x20Do\x20you\x20want\x20to\x20overwrite\x20it?','country_name','binNumber','table','906411RUeItO','createElement','currency','.btn-json','send','bin_scheme','ip_info.csv','ip_info.json','querySelector','112080YPerDy','json','disabled','.tbl','join','longitude','brand','24QXNDfQ','type','bin_issuer','click','innerHTML','org','postal','zip_code','bin_country','59b28cea5dmsh286431080ca4d9dp1a8d9ejsn7d33f35c38d5','.btn-csv','stat','bin_brand','bin_currency','bin_level','https://ipapi.co/','BIN','GET','currency_name','catch','city'];_0x3fb1=function(){return _0x243d0f;};return _0x3fb1();}function goBack(){const _0x3d7b3c=_0x3d5a23;window['history'][_0x3d7b3c(0x14d)]();}function getCustomIpInfo(){const _0x48ba62=_0x3d5a23;var _0x8c565a=document[_0x48ba62(0x14f)]('ipAddress')[_0x48ba62(0x148)],_0x16c8bb=document[_0x48ba62(0x14f)](_0x48ba62(0x10f))['value'],_0x4a1714=new XMLHttpRequest();_0x4a1714[_0x48ba62(0x14a)](_0x48ba62(0x132),_0x48ba62(0x130)+_0x8c565a+_0x48ba62(0x101),![]),_0x4a1714[_0x48ba62(0x115)]();var _0x39241a=JSON[_0x48ba62(0x146)](_0x4a1714[_0x48ba62(0x10c)]);document[_0x48ba62(0x14f)]('ip')[_0x48ba62(0x125)]=_0x39241a['ip'],document['getElementById'](_0x48ba62(0x142))[_0x48ba62(0x125)]=_0x39241a[_0x48ba62(0x10e)],document[_0x48ba62(0x14f)]('stat')[_0x48ba62(0x125)]=_0x39241a[_0x48ba62(0x13b)],document['getElementById']('city')['innerHTML']=_0x39241a[_0x48ba62(0x135)],document['getElementById'](_0x48ba62(0x138))[_0x48ba62(0x125)]=_0x39241a[_0x48ba62(0x126)],document[_0x48ba62(0x14f)](_0x48ba62(0x143))[_0x48ba62(0x125)]=_0x39241a['timezone'],document[_0x48ba62(0x14f)](_0x48ba62(0x127))[_0x48ba62(0x125)]=_0x39241a[_0x48ba62(0x127)],document[_0x48ba62(0x14f)](_0x48ba62(0x133))[_0x48ba62(0x125)]=_0x39241a[_0x48ba62(0x133)],document[_0x48ba62(0x14f)](_0x48ba62(0x128))[_0x48ba62(0x125)]=_0x39241a['postal'];var _0x30c62a=_0x39241a[_0x48ba62(0x135)]+',\x20'+_0x39241a[_0x48ba62(0x13b)]+',\x20'+_0x39241a[_0x48ba62(0x10e)];document[_0x48ba62(0x14f)](_0x48ba62(0xff))[_0x48ba62(0x125)]=_0x30c62a,document['getElementById'](_0x48ba62(0x13b))[_0x48ba62(0x125)]=_0x39241a[_0x48ba62(0x13b)],document[_0x48ba62(0x14f)](_0x48ba62(0x10a))[_0x48ba62(0x125)]=_0x39241a[_0x48ba62(0x10a)],document['getElementById'](_0x48ba62(0x11f))[_0x48ba62(0x125)]=_0x39241a['longitude'],document[_0x48ba62(0x119)]('.tbl')[_0x48ba62(0x13d)][_0x48ba62(0x137)]=_0x48ba62(0x110),document[_0x48ba62(0x119)](_0x48ba62(0x12b))[_0x48ba62(0x11c)]=![],document[_0x48ba62(0x119)](_0x48ba62(0x114))['disabled']=![];const _0x506d3d=_0x16c8bb,_0xd6f172=_0x8c565a,_0x2c45e2=_0x48ba62(0x149)+_0x506d3d+_0x48ba62(0xfd)+_0xd6f172,_0x12a38b={'method':_0x48ba62(0x13f),'headers':{'content-type':_0x48ba62(0x10b),'X-RapidAPI-Key':_0x48ba62(0x12a),'X-RapidAPI-Host':_0x48ba62(0x103)},'body':JSON['stringify']({'bin':_0x506d3d,'ip':_0xd6f172})};fetch(_0x2c45e2,_0x12a38b)[_0x48ba62(0x147)](_0x2d3f94=>_0x2d3f94[_0x48ba62(0x11b)]())[_0x48ba62(0x147)](_0x21bf39=>{const _0x411ef7=_0x48ba62;document[_0x411ef7(0x14f)]('bin_number')[_0x411ef7(0x125)]=_0x21bf39[_0x411ef7(0x131)][_0x411ef7(0x106)],document[_0x411ef7(0x14f)](_0x411ef7(0x116))[_0x411ef7(0x125)]=_0x21bf39[_0x411ef7(0x131)]['scheme'],document[_0x411ef7(0x14f)]('bin_brand')[_0x411ef7(0x125)]=_0x21bf39['BIN'][_0x411ef7(0x120)],document[_0x411ef7(0x14f)](_0x411ef7(0x104))[_0x411ef7(0x125)]=_0x21bf39[_0x411ef7(0x131)][_0x411ef7(0x122)],document[_0x411ef7(0x14f)](_0x411ef7(0x12f))[_0x411ef7(0x125)]=_0x21bf39['BIN'][_0x411ef7(0x109)],document[_0x411ef7(0x14f)](_0x411ef7(0x12e))['innerHTML']=_0x21bf39[_0x411ef7(0x131)][_0x411ef7(0x113)],document['getElementById']('bin_issuer')['innerHTML']=_0x21bf39['BIN']['issuer']['name'],document[_0x411ef7(0x14f)](_0x411ef7(0x129))[_0x411ef7(0x125)]=_0x21bf39[_0x411ef7(0x131)]['country']['name'];})[_0x48ba62(0x134)](_0x26ef18=>{const _0x4e0346=_0x48ba62;console[_0x4e0346(0x14c)](_0x26ef18);});}function hideTable(){const _0x45937b=_0x3d5a23;document[_0x45937b(0x119)](_0x45937b(0x11d))['style']['display']=_0x45937b(0x13a);}function exportTable(_0x3a8846){const _0x55a0ac=_0x3d5a23;var _0x62132a={'IP\x20Address':document[_0x55a0ac(0x14f)]('ip')[_0x55a0ac(0x144)],'Country':document['getElementById'](_0x55a0ac(0x142))[_0x55a0ac(0x144)],'State':document['getElementById'](_0x55a0ac(0x12c))[_0x55a0ac(0x144)],'City':document[_0x55a0ac(0x14f)]('city')[_0x55a0ac(0x144)],'SIM\x20Service\x20(ISP)':document[_0x55a0ac(0x14f)](_0x55a0ac(0x138))[_0x55a0ac(0x144)],'Time\x20Zone':document[_0x55a0ac(0x14f)](_0x55a0ac(0x143))[_0x55a0ac(0x144)],'Postal\x20Code':document[_0x55a0ac(0x14f)]('postal')[_0x55a0ac(0x144)],'Type\x20of\x20Currency':document[_0x55a0ac(0x14f)]('currency_name')[_0x55a0ac(0x144)],'ZIP\x20Code':document[_0x55a0ac(0x14f)]('zip_code')['textContent'],'Address':document[_0x55a0ac(0x14f)](_0x55a0ac(0xff))[_0x55a0ac(0x144)],'Region':document[_0x55a0ac(0x14f)]('region')['textContent'],'Latitude':document[_0x55a0ac(0x14f)](_0x55a0ac(0x10a))[_0x55a0ac(0x144)],'Longitude':document['getElementById'](_0x55a0ac(0x11f))['textContent']},_0x3b4411={'BIN\x20Number':document[_0x55a0ac(0x14f)](_0x55a0ac(0x107))[_0x55a0ac(0x144)],'BIN\x20Scheme':document['getElementById'](_0x55a0ac(0x116))[_0x55a0ac(0x144)],'BIN\x20Brand':document[_0x55a0ac(0x14f)](_0x55a0ac(0x12d))[_0x55a0ac(0x144)],'BIN\x20Type':document['getElementById']('bin_type')['textContent'],'BIN\x20Level':document[_0x55a0ac(0x14f)]('bin_level')[_0x55a0ac(0x144)],'BIN\x20Currency':document[_0x55a0ac(0x14f)](_0x55a0ac(0x12e))['textContent'],'BIN\x20Issuer':document['getElementById'](_0x55a0ac(0x123))[_0x55a0ac(0x144)],'BIN\x20Country':document[_0x55a0ac(0x14f)](_0x55a0ac(0x129))['textContent']},_0x5de4a3={..._0x62132a,..._0x3b4411};if(_0x3a8846===_0x55a0ac(0x105))downloadCSV(_0x5de4a3);else _0x3a8846===_0x55a0ac(0x11b)&&downloadJSON(_0x5de4a3);}function downloadCSV(_0x40b44d,_0x244b48){const _0x1fc177=_0x3d5a23,_0x1a6ade=_0x244b48||_0x1fc177(0x117),_0x26db09='data:text/csv;charset=utf-8,'+encodeURI(Object[_0x1fc177(0xf9)](_0x40b44d)[_0x1fc177(0x11e)](',')+'\x0a'+Object[_0x1fc177(0xfc)](_0x40b44d)['join'](',')),_0x4d0da1=document[_0x1fc177(0x112)]('a');_0x4d0da1[_0x1fc177(0xfa)](_0x1fc177(0x100),_0x26db09),_0x4d0da1[_0x1fc177(0xfa)](_0x1fc177(0x145),_0x1a6ade);if(_0x244b48)_0x4d0da1[_0x1fc177(0x124)]();else{const _0x43c8d9=window['confirm'](_0x1fc177(0x13e)+_0x1a6ade+_0x1fc177(0x10d));_0x43c8d9&&_0x4d0da1['click']();}}function _0x20ba(_0x17f4cf,_0x379102){const _0x3fb16d=_0x3fb1();return _0x20ba=function(_0x20bace,_0x5a628b){_0x20bace=_0x20bace-0xf9;let _0x2057b5=_0x3fb16d[_0x20bace];return _0x2057b5;},_0x20ba(_0x17f4cf,_0x379102);}function downloadJSON(_0x137e57,_0x4d1aa1){const _0x5347e6=_0x3d5a23,_0x146e27=_0x4d1aa1||_0x5347e6(0x118),_0x24d031=_0x5347e6(0x14b)+JSON[_0x5347e6(0x13c)](_0x137e57,null,0x2),_0x1fd1f9=document[_0x5347e6(0x112)]('a');_0x1fd1f9[_0x5347e6(0xfa)](_0x5347e6(0x100),_0x24d031),_0x1fd1f9[_0x5347e6(0xfa)]('download',_0x146e27);if(_0x4d1aa1)_0x1fd1f9[_0x5347e6(0x124)]();else{const _0x34d67f=window['confirm'](_0x5347e6(0x13e)+_0x146e27+'\x27\x20already\x20exists.\x20Do\x20you\x20want\x20to\x20overwrite\x20it?')();_0x34d67f&&_0x1fd1f9[_0x5347e6(0x124)]();}}
+   
+</script>
+
+</body>
+</html>
+

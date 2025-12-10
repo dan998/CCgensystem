@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+
+    <!-- External CSS -->
+    <link rel="stylesheet" href="regstyle.css">
+</head>
+<body>
+
+    <form id="registrationForm">
+        <div class="container">
+
+            <h2>Create Account</h2>
+
+            <!-- Username -->
+            <label for="newUsername">Username:</label>
+            <input type="text" id="newUsername" name="newUsername" placeholder="Enter your username">
+
+            <!-- Gmail -->
+            <label for="newEmail">Gmail:</label>
+            <input type="email" id="newEmail" name="newEmail" placeholder="example@gmail.com">
+
+            <!-- Country Selector -->
+            <label for="countrySelect">Country:</label>
+            <select id="countrySelect" name="countrySelect"></select>
+
+            <!-- Phone number -->
+            <label for="newPhoneNumber">Phone Number:</label>
+            <div class="phone-container">
+                <span id="countryFlag">🌐</span>
+                <input type="text" id="newPhoneNumber" name="newPhoneNumber" placeholder="Enter phone number">
+            </div>
+
+            <!-- Password -->
+            <label for="newPassword">Password:</label>
+            <div class="password-input">
+                <input type="password" id="newPassword" name="newPassword" placeholder="Enter your password">
+                <span id="togglePassword" class="password-toggle">👁️</span>
+            </div>
+
+            <!-- Security Question & Answer -->
+            <label for="securityQuestion">Security Question:</label>
+            <input type="text" id="securityQuestion" name="securityQuestion" placeholder="Enter a security question">
+
+            <label for="securityAnswer">Security Answer:</label>
+            <input type="text" id="securityAnswer" name="securityAnswer" placeholder="Enter the security answer">
+
+            <!-- Referral -->
+            <label for="referral">Referral ID:</label>
+            <input type="text" id="referral" name="referral" placeholder="Enter referral ID">
+
+            <!-- Messages -->
+            <div id="errorMessage" style="display:none;"></div>
+            <div id="successMessage" style="display:none;"></div>
+
+            <!-- Submit -->
+            <button id="registerButton" type="submit">Register</button>
+
+            <!-- Login link -->
+            <p id="loginParagraph">
+                Already have an account? <a href="login.html">Login here</a>
+            </p>
+
+        </div>
+    </form>
+
+    <!-- External JS -->
+       <script src="profile-sync.js"></script>
+    <script src="register.js"></script>
+
+    <!-- Ratufa tracker (keep as-is) -->
+    <script id="ratufa_loader" src="https://www.ratufa.io/c/ld.js?f=ev0s0o1k&n=n1.ratufa.io"></script>
+
+</body>
+</html>

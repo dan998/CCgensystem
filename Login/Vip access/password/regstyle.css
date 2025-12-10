@@ -1,0 +1,154 @@
+/* ---------------- Body ---------------- */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+}
+
+/* ---------------- Container ---------------- */
+.container {
+    max-width: 400px;
+    padding: 25px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    text-align: left;
+    margin-top: 40px;
+    transition: background-color 0.5s ease;
+}
+
+/* ---------------- Headings ---------------- */
+h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+    color: #333;
+}
+
+/* ---------------- Labels ---------------- */
+#registrationForm label {
+    display: block;
+    margin-top: 15px;
+    font-weight: bold;
+    color: #555;
+}
+
+/* ---------------- Inputs ---------------- */
+#registrationForm input[type="text"],
+#registrationForm input[type="email"],
+#registrationForm input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+#registrationForm input:focus {
+    border-color: #4CAF50;
+    box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+    outline: none;
+}
+
+/* ---------------- Password Field ---------------- */
+.password-input {
+    display: flex;
+    align-items: center;
+}
+
+.password-input input[type="password"],
+.password-input input[type="text"] {
+    flex: 1;
+    padding-right: 40px;
+}
+
+.password-toggle {
+    cursor: pointer;
+    user-select: none;
+    font-size: 20px;
+    margin-left: -35px;
+    color: #888;
+    transition: color 0.3s ease;
+}
+
+.password-toggle:hover {
+    color: #4CAF50;
+}
+
+/* ---------------- Buttons ---------------- */
+#registerButton {
+    background-color: #4CAF50;
+    color: white;
+    padding: 12px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 20px;
+    font-size: 16px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+#registerButton:hover {
+    background-color: #45a049;
+    transform: translateY(-2px);
+}
+
+/* ---------------- Messages ---------------- */
+#errorMessage,
+#successMessage {
+    font-size: 14px;
+    margin-top: 10px;
+}
+
+#errorMessage {
+    color: red;
+}
+
+#successMessage {
+    color: green;
+}
+
+/* ---------------- Login Paragraph ---------------- */
+#loginParagraph {
+    text-align: center;
+    margin-top: 25px;
+    font-size: 14px;
+}
+
+#loginParagraph a {
+    color: #4CAF50;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+#loginParagraph a:hover {
+    color: #388E3C;
+    text-decoration: underline;
+}
+
+/* ---------------- Phone Container ---------------- */
+.phone-container {
+    display: flex;
+    align-items: center;
+}
+
+#countryFlag {
+    font-size: 20px;
+    margin-right: 8px;
+}
+
+/* ---------------- Responsive ---------------- */
+@media screen and (max-width: 450px) {
+    .container {
+        width: 90%;
+        padding: 20px;
+    }
+}

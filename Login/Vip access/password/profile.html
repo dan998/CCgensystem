@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyber Dashboard - Profile</title>
+    <link rel="stylesheet" href="profile.css">
+</head>
+<body>
+    <div class="dashboard-container">
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="profile-section">
+                <img src="default-avatar.png" alt="Profile Picture" id="profilePic">
+                <h3 id="sidebarUsername">Username</h3>
+                <span id="statusBadge" class="status-badge">Checking...</span>
+            </div>
+
+            <nav class="menu">
+                <ul>
+                    <li class="active" data-tab="dashboardTab">Dashboard</li>
+                    <li data-tab="profileTab">Profile</li>
+                    <li data-tab="securityTab">Security</li>
+                    <li id="logoutBtn">Logout</li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+
+            <!-- Dashboard -->
+            <section id="dashboardTab" class="tab active">
+                <h2>Dashboard</h2>
+                <button id="ccGenBtn" class="gen-btn">Go to CC Gen</button>
+
+                <div class="cards">
+                    <div class="card">
+                        <h4>Public IP</h4>
+                        <p id="ipAddress">Loading...</p>
+                    </div>
+
+                    <div class="card">
+                        <h4>WebRTC IPs</h4>
+                        <p id="webrtcIPs">Loading...</p>
+                    </div>
+
+                    <div class="card">
+                        <h4>Country</h4>
+                        <p id="country">Loading...</p>
+                    </div>
+
+                    <div class="card">
+                        <h4>Network / ISP</h4>
+                        <p id="network">Loading...</p>
+                    </div>
+
+                    <div class="card">
+                        <h4>Device Info</h4>
+                        <p id="deviceInfo">Loading...</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Profile -->
+            <section id="profileTab" class="tab">
+                <h2>Profile</h2>
+                <div class="profile-card">
+                    <div class="profile-left">
+                        <img src="default-avatar.png" alt="Profile Picture" id="profilePicUpdate">
+                        <input type="file" id="profilePicInput" accept="image/*">
+                    </div>
+                    <div class="profile-right">
+                        <label>Username:</label>
+                        <input type="text" id="profileUsername" disabled>
+
+                        <label>Email:</label>
+                        <input type="text" id="profileEmail" disabled>
+
+                        <label>Phone Number:</label>
+                        <input type="text" id="profilePhone">
+
+                        <label>Country:</label>
+                        <input type="text" id="profileCountry" disabled>
+
+                        <label>Network:</label>
+                        <input type="text" id="profileNetwork" disabled>
+
+                        <button id="updateProfileBtn">Update Profile</button>
+                        <p id="profileMsg" class="success-msg"></p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Security -->
+            <section id="securityTab" class="tab">
+                <h2>Security Settings</h2>
+
+                <label>Current Password:</label>
+                <input type="password" id="currentPassword">
+
+                <label>New Password:</label>
+                <input type="password" id="newPassword">
+
+                <label>Confirm New Password:</label>
+                <input type="password" id="confirmPassword">
+
+                <button id="updatePasswordBtn">Update Password</button>
+                <p id="securityMsg" class="success-msg"></p>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="profile-sync.js"></script>
+    <script src="profile.js"></script>
+</body>
+</html>

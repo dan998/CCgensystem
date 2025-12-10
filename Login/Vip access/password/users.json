@@ -1,0 +1,62 @@
+[
+    {
+        "username": "dan99",
+        "password": "password123",
+        "securityQuestion": "who started the team",
+  "securityAnswer": "Dan Maffia"
+    },
+    {
+        "email": "john.doe@example.com",
+        "password": "password123"
+    },
+    {
+        "username": "jane_smith",
+        "email": "jane.smith@example.com",
+        "password": "securePass"
+    },
+    {
+        "username": "bob_jones",
+        "email": "bob.jones@example.com",
+        "password": "secretPwd"
+    },
+    {
+  "username": "Dan",
+  "email": "codingfamily545@gmail.com",
+  "password": "test123",
+  "securityQuestion": "we love",
+  "securityAnswer": "money"
+},
+{"username":"user","email":"user@gmail.com","phone":"5926832523","referral":"test","friendReferral":""},
+
+ 
+    {
+        "username": "user1",
+        "email": "user1@example.com",
+        "password": "password1",
+        "securityQuestion": "What is your favorite color?",
+        "securityAnswer": "Blue",
+        "phone": "1234567890",
+        "referral": "ref123",
+        "friendReferral": "ref456"
+    },
+    {
+        "username": "user2",
+        "email": "user2@example.com",
+        "password": "password2",
+        "securityQuestion": "What is your mother's maiden name?",
+        "securityAnswer": "Smith",
+        "phone": "9876543210",
+        "referral": "ref456",
+        "friendReferral": "ref789"
+    },
+    {
+        "username": "user3",
+        "email": "user3@example.com",
+        "password": "password3",
+        "securityQuestion": "What city were you born in?",
+        "securityAnswer": "New York",
+        "phone": "5555555555",
+        "referral": "ref789",
+        "friendReferral": "ref123"
+    }
+]
