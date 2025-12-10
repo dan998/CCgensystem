@@ -1,44 +1,48 @@
-// ================= LOGIN.JS ===========================
-document.addEventListener('DOMContentLoaded', async () => {
-    if (!window.profileSync) return console.error("profile-sync.js not loaded!");
+// ====================== LOGIN.JS (Offline + Auto-Sync) ===========================
+document.addEventListener("DOMContentLoaded", () => {
+    if (!window.profileSync) {
+        console.error("profile-sync.js not loaded!");
+        return;
+    }
 
     const profileSync = window.profileSync;
-    const SERVER_URL = "http://localhost:3000";
 
     const usernameInput = document.getElementById('usernameInput');
     const passwordInput = document.getElementById('passwordInput');
     const checkAccessButton = document.getElementById('checkAccessButton');
     const errorMessages = document.getElementById('errorMessages');
+    const showPassword = document.getElementById('showPassword');
 
+    // Toggle password visibility
+    showPassword?.addEventListener('click', () => {
+        if (!passwordInput) return;
+        passwordInput.type = passwordInput.type === "password" ? "text" : "password";
+    });
+
+    // Login
     checkAccessButton?.addEventListener('click', async () => {
         const username = usernameInput.value.trim();
         const password = passwordInput.value;
-        if (!username || !password) return showError("Username and Password required.");
 
-        // Offline check
-        let users = profileSync.getLocalUserList();
-        let user = users.find(u => u.username === username);
-
-        // Online fallback
-        if (!user && navigator.onLine) {
-            try {
-                const res = await fetch(`${SERVER_URL}/getUser?username=${encodeURIComponent(username)}`);
-                const data = await res.json();
-                if (data.user) {
-                    user = data.user;
-                    profileSync.setLocalUser(user);
-                }
-            } catch (err) {
-                console.warn("Server unreachable, using offline only.");
-            }
+        if (!username || !password) {
+            return showError("Username and Password are required.");
         }
 
-        if (!user || user.password !== password) return showError("Invalid username or password.");
+        try {
+            const user = await profileSync.login(username, password, { captureLocation: true });
+            if (!user) return showError("Login failed. Incorrect username or password.");
 
-        profileSync.setLocalUser(user); // mark active user
-        errorMessages.style.color = "lime";
-        errorMessages.textContent = "Login successful! Redirecting...";
-        setTimeout(() => window.location.href = "profile.html", 500);
+            errorMessages.style.color = "lime";
+            errorMessages.textContent = "Login successful! Redirecting...";
+
+            setTimeout(() => {
+                window.location.href = "profile.html";
+            }, 500);
+
+        } catch (err) {
+            console.error(err);
+            showError("Unable to reach server. Working offline mode.");
+        }
     });
 
     function showError(msg) {

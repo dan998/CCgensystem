@@ -1,8 +1,11 @@
-// ================= FORGOT PASSWORD.JS ===========================
+// ====================== FORGOT-PASSWORD.JS (Offline + Auto-Sync) ===========================
 document.addEventListener("DOMContentLoaded", () => {
-    if (!window.profileSync) return console.error("profile-sync.js not loaded!");
+    if (!window.profileSync) {
+        console.error("profile-sync.js not loaded!");
+        return;
+    }
+
     const profileSync = window.profileSync;
-    const SERVER_URL = "http://localhost:3000";
 
     const usernameInput = document.getElementById("fpUsername");
     const securityQInput = document.getElementById("fpSecurityQuestion");
@@ -13,60 +16,64 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let activeUser = null;
 
+    // -------------------- FETCH USER --------------------
     usernameInput?.addEventListener("blur", async () => {
         const username = usernameInput.value.trim();
         if (!username) return;
 
-        // Offline first
-        let users = profileSync.getLocalUserList();
+        // Try offline first
+        const users = JSON.parse(localStorage.getItem("users")) || [];
         activeUser = users.find(u => u.username === username);
 
-        // Online fallback
+        // If not found locally and online, fetch from server
         if (!activeUser && navigator.onLine) {
             try {
-                const res = await fetch(`${SERVER_URL}/getUser?username=${encodeURIComponent(username)}`);
-                const data = await res.json();
-                if (data.user) {
-                    activeUser = data.user;
-                    profileSync.setLocalUser(activeUser);
-                }
+                activeUser = await profileSync.fetchUserFromServer(username);
             } catch (err) {
-                console.warn("Server unreachable, using offline only.");
+                console.warn("Failed to fetch user from server:", err.message);
             }
         }
 
+        // Populate security question if user exists
         securityQInput.value = activeUser?.securityQuestion || "";
     });
 
+    // -------------------- RESET PASSWORD --------------------
     resetBtn?.addEventListener("click", async () => {
-        if (!activeUser) return showMessage("Username not found!", "red");
+        if (!activeUser) {
+            showMessage("Username not found!", "red");
+            return;
+        }
 
-        const answer = securityAInput.value.trim();
-        const newPass = newPasswordInput.value;
-        if (!answer || !newPass) return showMessage("Please fill all fields.", "red");
-        if (answer !== activeUser.securityAnswer) return showMessage("Security answer is incorrect!", "red");
+        const answer = securityAInput?.value.trim();
+        const newPass = newPasswordInput?.value;
 
-        // Update locally
+        if (!answer || !newPass) {
+            showMessage("Please fill all fields.", "red");
+            return;
+        }
+
+        if (answer !== activeUser.securityAnswer) {
+            showMessage("Security answer is incorrect!", "red");
+            return;
+        }
+
+        // Update password locally
         activeUser.password = newPass;
         profileSync.setLocalUser(activeUser);
 
-        // Attempt server sync
-        if (navigator.onLine) {
-            try {
-                await fetch(`${SERVER_URL}/updateUser`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ username: activeUser.username, data: activeUser })
-                });
-            } catch (err) {
-                console.warn("Server sync failed, saved locally.");
-            }
+        // Queue sync to server
+        try {
+            await profileSync.syncToServer();
+        } catch (err) {
+            console.warn("Server offline, password saved locally:", err.message);
         }
 
-        showMessage("Password reset successful! Redirecting...", "lime");
+        showMessage("Password reset successful! Redirecting to login...", "lime");
         setTimeout(() => window.location.href = "login.html", 1000);
     });
 
+    // -------------------- HELPER --------------------
     function showMessage(msg, color) {
         if (!fpMsg) return;
         fpMsg.textContent = msg;

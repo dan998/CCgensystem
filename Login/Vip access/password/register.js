@@ -1,4 +1,4 @@
-// ================= REGISTER.JS ===========================
+// ====================== REGISTER.JS (Offline + Auto-Sync) ===========================
 document.addEventListener("DOMContentLoaded", async () => {
     if (!window.profileSync) {
         console.error("profile-sync.js not loaded!");
@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const registerBtn   = document.getElementById("registerBtn");
     const registerMsg   = document.getElementById("registerMsg");
 
-    // Load countries
+    // ---------------- LOAD COUNTRIES FROM JSON ----------------
     try {
         const response = await fetch("./countries.json");
         const countries = await response.json();
@@ -32,33 +32,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         console.error("Failed to load countries.json:", err);
     }
 
-    // ---------------- AUTO SYNC FUNCTION ----------------
-    async function syncLocalUsersToServer() {
-        if (!navigator.onLine) return;
-
-        const users = profileSync.getLocalUserList();
-        for (let user of users) {
-            if (user.synced) continue;
-            try {
-                const res = await fetch(`${SERVER_URL}/updateUser`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ username: user.username, data: user })
-                });
-                if (!res.ok) throw new Error("Server registration failed");
-
-                user.synced = true;
-                profileSync.setLocalUser(user);
-                console.log(`User ${user.username} synced to server`);
-            } catch (err) {
-                console.warn(`Failed to sync ${user.username}:`, err.message);
-            }
-        }
-    }
-
-    syncLocalUsersToServer();
-    window.addEventListener("online", syncLocalUsersToServer);
-
     // -------------------- REGISTER BUTTON --------------------
     registerBtn?.addEventListener("click", async () => {
         const username = usernameInput?.value.trim();
@@ -69,32 +42,54 @@ document.addEventListener("DOMContentLoaded", async () => {
         const question = securityQ?.value.trim();
         const answer   = securityA?.value.trim();
 
-        if (!username || !email || !password || !question || !answer || !country)
+        // Validate required fields
+        if (!username || !email || !password || !question || !answer || !country) {
             return showMessage("Please fill all required fields.", "red");
+        }
 
-        if (phone && !/^\+?\d{6,15}$/.test(phone)) return showMessage("Invalid phone number.", "red");
+        // Validate phone number
+        if (phone && !/^\+?\d{6,15}$/.test(phone)) {
+            return showMessage("Invalid phone number.", "red");
+        }
 
-        const users = profileSync.getLocalUserList();
-        if (users.find(u => u.username === username)) return showMessage("Username exists!", "red");
-        if (users.find(u => u.email === email)) return showMessage("Email exists!", "red");
+        // Check duplicates locally
+        const users = JSON.parse(localStorage.getItem("users")) || [];
+        if (users.find(u => u.username === username)) {
+            return showMessage("Username already exists!", "red");
+        }
+        if (users.find(u => u.email === email)) {
+            return showMessage("Email already registered!", "red");
+        }
 
         const newUser = {
-            username, email, password, phone, country,
-            securityQuestion: question, securityAnswer: answer,
-            profilePic: "", loginHistory: [], synced: false
+            username,
+            email,
+            password,
+            phone: phone || "",
+            country,
+            securityQuestion: question,
+            securityAnswer: answer,
+            profilePic: "",
+            loginHistory: [],
+            lastSession: null
         };
 
+        // Save locally & queue sync
         profileSync.setLocalUser(newUser);
-        await syncLocalUsersToServer();
+        await profileSync.syncToServer();
 
-        if (newUser.synced) {
+        // Check if synced
+        const local = profileSync.getLocalUser();
+        if (local) {
             showMessage("Registration successful! Redirecting to login...", "lime");
+            setTimeout(() => window.location.href = "login.html", 1000);
         } else {
             showMessage("Saved locally. Will sync when online.", "orange");
+            setTimeout(() => window.location.href = "login.html", 1500);
         }
-        setTimeout(() => window.location.href = "login.html", 1500);
     });
 
+    // -------------------- HELPER --------------------
     function showMessage(msg, color) {
         if (!registerMsg) return;
         registerMsg.textContent = msg;
