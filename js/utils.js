@@ -1,9 +1,15 @@
-// ---------------- UTILS ----------------
+ // ---------------- UTILS ----------------
 
 // RSA Encrypt
 function encryptData(data) {
     const publicKey = `-----BEGIN PUBLIC KEY-----
-PASTE_YOUR_PUBLIC_KEY_HERE
+MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAlga9H9i22>
++AEf+jvAfKEYKVkgg5uD3i6kRtLMskp8w5FToYCwcJDW0rksnEVgP>
+iJxJV4Fnr5ORcrLXIaLc4DGBuGnkH5i6Qos1PXwTSdnsFjRygM9FL>
+ZUbIxyCET+LZ0Eoh9hIhICt3eJLvwwPGye+EW3WNRB8Cwh/f2hjGC>
+1qGjxQyQuPJnmBgjbJYXWmlGkxdcJmg5jf/xHJ7qa/xDGoE8nySTt>
+iUWgF3hOOa6HNjxe1j90o1LufdAWQi3y3NIdCyWaUOLLQdEXet9PJ>
+XwIDAQAB
 -----END PUBLIC KEY-----`;
     const encrypt = new JSEncrypt();
     encrypt.setPublicKey(publicKey);
