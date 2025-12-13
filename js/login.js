@@ -2,20 +2,15 @@ document.getElementById("loginBtn").addEventListener("click", async () => {
     const loginInput = document.getElementById("loginUser").value.trim();
     const loginPass = document.getElementById("loginPass").value.trim();
 
-    const payload = encryptData({ loginInput, loginPass });
-
     try {
-        const res = await fetch("http://localhost:3000/secure-login", {
+        const res = await fetch("http://CCgensystem.arkanafaisal.my.id:3000/auth/login", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ payload })
+            body: JSON.stringify({usernameOrEmail: loginInput, password: loginPass})
         });
         const result = await res.json();
         if (result.ok) {
-            const db = getLocalDB();
-            const userExists = db.users.some(u => u.username === result.user.username);
-            if (!userExists) db.users.push(result.user);
-            saveLocalDB(db);
+            alert('login successfull')
             window.location.href = "dashboard.html";
         } else {
             alert("Login failed: " + result.error);
