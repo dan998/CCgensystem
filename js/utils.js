@@ -1,71 +1,59 @@
- // ---------------- UTILS ----------------
+// ================= RSA ENCRYPT =================
+function encryptData(payload) {
+    const publicKey = `
+-----BEGIN PUBLIC KEY-----
+MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAuZCw2fkcoY6pHLjcJHDf
+d+d2UunfQ3tKc/obu+tSS+uN76OaOKCDNylRinA9PvNYkGUArKeHdXwQhhoYIVSx
+5UxPK+oS39UHCr9YsekUXrHNa8K0mAXd+6hPIiuA8nAUnBYQ32VDVHilIgnVenj8
+uI+QYiq0Nnv/cTUqSww74rdQ7x9IrND9q1NZM2GARm6f6WPP8aV+pUIBrs/Lp/6L
++ra83lasJu9VB+LXVNA7KMiC7Mx7HiNlzS5jxGr4ilSKFGO0rxyl2za4ji60yzbM
+YnKOQFMnMrhSfk+5npBu4aUHR+j+m5XXSTC/BiujxjFDZhZxtHbastNQRC5qB372
+EwIDAQAB
+-----END PUBLIC KEY-----
+`;
 
-// RSA Encrypt
-function encryptData(data) {
-    const publicKey = `-----BEGIN PUBLIC KEY-----
-MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAlga9H9i22>
-+AEf+jvAfKEYKVkgg5uD3i6kRtLMskp8w5FToYCwcJDW0rksnEVgP>
-iJxJV4Fnr5ORcrLXIaLc4DGBuGnkH5i6Qos1PXwTSdnsFjRygM9FL>
-ZUbIxyCET+LZ0Eoh9hIhICt3eJLvwwPGye+EW3WNRB8Cwh/f2hjGC>
-1qGjxQyQuPJnmBgjbJYXWmlGkxdcJmg5jf/xHJ7qa/xDGoE8nySTt>
-iUWgF3hOOa6HNjxe1j90o1LufdAWQi3y3NIdCyWaUOLLQdEXet9PJ>
-XwIDAQAB
------END PUBLIC KEY-----`;
-    const encrypt = new JSEncrypt();
-    encrypt.setPublicKey(publicKey);
-    return encrypt.encrypt(JSON.stringify(data));
+    const encryptor = new JSEncrypt();
+    encryptor.setPublicKey(publicKey);
+
+    const encrypted = encryptor.encrypt(JSON.stringify(payload));
+    if (!encrypted) throw new Error("Encryption failed");
+
+    return encrypted;
 }
 
-// LocalStorage functions
+// ================= Local Storage =================
 function getLocalDB() {
     return JSON.parse(localStorage.getItem("loggedUsersDB")) || { users: [] };
 }
+
 function saveLocalDB(db) {
     localStorage.setItem("loggedUsersDB", JSON.stringify(db));
 }
 
-// Generate referral code
+// ================= Referral Code =================
 function generateReferralCode() {
     return Math.random().toString(36).substring(2, 10).toUpperCase();
 }
 
-// Get country & flag using IP API
+// ================= Country & Flag =================
 async function getUserCountry() {
     try {
-        const res = await fetch('https://ipapi.co/json');
+        const res = await fetch("https://ipapi.co/json");
         const data = await res.json();
-        return {
-            country: data.country_name,
-            flag: data.country_code ? getFlagEmoji(data.country_code) : ''
-        };
-    } catch {
-        return { country: 'Unknown', flag: '' };
-    }
-}
 
-function getFlagEmoji(countryCode) {
-    return countryCode.toUpperCase().replace(/./g, char =>
-        String.fromCodePoint(127397 + char.charCodeAt())
-    );
-}
-
-// Get country & flag using IP API
-async function getUserCountry() {
-    try {
-        const res = await fetch('https://ipapi.co/json'); // public IP geolocation
-        const data = await res.json();
         return {
             country: data.country_name || "Unknown",
             flag: data.country_code ? getFlagEmoji(data.country_code) : ""
         };
     } catch {
-        return { country: 'Unknown', flag: '' };
+        return { country: "Unknown", flag: "" };
     }
 }
 
-// Convert country code to emoji flag
 function getFlagEmoji(countryCode) {
-    return countryCode.toUpperCase().replace(/./g, char =>
-        String.fromCodePoint(127397 + char.charCodeAt())
-    );
-}
+    return countryCode
+        .toUpperCase()
+        .replace(/./g, char =>
+            String.fromCodePoint(127397 + char.charCodeAt())
+        );
+     }
